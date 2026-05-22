@@ -75,8 +75,9 @@ fun AdvancedSettingsScreen(
         if (Settings.readVerticalSpaceSwipe(prefs) == KeyboardActionListener.SwipeAction.TOUCHPAD_MODE)
             Settings.PREF_TOUCHPAD_EDGE_SCROLL else null,
         Settings.PREF_DELETE_SWIPE,
-        if (prefs.getBoolean(Settings.PREF_DELETE_SWIPE, Defaults.PREF_DELETE_SWIPE))
-            Settings.PREF_SWIPE_DELETE_BY_WORD else null,
+        Settings.PREF_SWIPE_DELETE_BY_WORD,
+        if (prefs.getBoolean(Settings.PREF_SWIPE_DELETE_BY_WORD, Defaults.PREF_SWIPE_DELETE_BY_WORD))
+            Settings.PREF_SWIPE_DELETE_WORD_SENSITIVITY else null,
         Settings.PREF_SPACE_TO_CHANGE_LANG,
         Settings.PREFS_LONG_PRESS_SYMBOLS_FOR_NUMPAD,
         Settings.PREF_ENABLE_EMOJI_ALT_PHYSICAL_KEY,
@@ -161,10 +162,25 @@ fun createAdvancedSettings(context: Context) = listOf(
         SwitchPreference(it, Defaults.PREF_TOUCHPAD_EDGE_SCROLL)
     },
     Setting(context, Settings.PREF_DELETE_SWIPE, R.string.delete_swipe, R.string.delete_swipe_summary) {
-        SwitchPreference(it, Defaults.PREF_DELETE_SWIPE)
+        val ctx = LocalContext.current
+        SwitchPreference(it, Defaults.PREF_DELETE_SWIPE) { enabled ->
+            if (enabled) ctx.prefs().edit { putBoolean(Settings.PREF_SWIPE_DELETE_BY_WORD, false) }
+        }
     },
     Setting(context, Settings.PREF_SWIPE_DELETE_BY_WORD, R.string.swipe_delete_by_word, R.string.swipe_delete_by_word_summary) {
-        SwitchPreference(it, Defaults.PREF_SWIPE_DELETE_BY_WORD)
+        val ctx = LocalContext.current
+        SwitchPreference(it, Defaults.PREF_SWIPE_DELETE_BY_WORD) { enabled ->
+            if (enabled) ctx.prefs().edit { putBoolean(Settings.PREF_DELETE_SWIPE, false) }
+        }
+    },
+    Setting(context, Settings.PREF_SWIPE_DELETE_WORD_SENSITIVITY, R.string.swipe_delete_word_sensitivity) { setting ->
+        SliderPreference(
+            name = setting.title,
+            key = setting.key,
+            default = Defaults.PREF_SWIPE_DELETE_WORD_SENSITIVITY,
+            range = 1f..5f,
+            description = { it.toInt().toString() }
+        )
     },
     Setting(context, Settings.PREF_SPACE_TO_CHANGE_LANG,
         R.string.prefs_long_press_keyboard_to_change_lang,

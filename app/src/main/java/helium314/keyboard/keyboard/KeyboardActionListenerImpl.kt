@@ -44,6 +44,9 @@ class KeyboardActionListenerImpl(private val latinIME: LatinIME, private val inp
     private var initialSubtype: InputMethodSubtype? = null
     private var subtypeSwitchCount = 0
 
+    // accumulated steps for word-deletion sensitivity
+    private var wordSwipeAccumulatedSteps = 0
+
     override fun onPressKey(primaryCode: Int, repeatCount: Int, isSinglePointer: Boolean, hapticEvent: HapticEvent) {
         metaOnPressKey(primaryCode)
         keyboardSwitcher.onPressKey(primaryCode, isSinglePointer, latinIME.currentAutoCapsState, latinIME.currentRecapitalizeState)
@@ -198,8 +201,18 @@ class KeyboardActionListenerImpl(private val latinIME: LatinIME, private val inp
 
     override fun onMoveDeletePointer(steps: Int) {
         inputLogic.finishInput()
+        val sv = Settings.getValues()
+        val actualSteps = if (sv.mSwipeDeleteByWord) {
+            wordSwipeAccumulatedSteps += steps
+            val wordCount = wordSwipeAccumulatedSteps / sv.mSwipeDeleteWordSensitivity
+            if (wordCount == 0) return
+            wordSwipeAccumulatedSteps -= wordCount * sv.mSwipeDeleteWordSensitivity
+            wordSteps(wordCount)
+        } else {
+            wordSwipeAccumulatedSteps = 0
+            actualSteps(steps)
+        }
         val end = connection.expectedSelectionEnd
-        val actualSteps = if (Settings.getValues().mSwipeDeleteByWord) wordSteps(steps) else actualSteps(steps)
         val start = connection.expectedSelectionStart + actualSteps
         if (start > end) return
         gestureMoveBackHaptics()
@@ -219,6 +232,7 @@ class KeyboardActionListenerImpl(private val latinIME: LatinIME, private val inp
     }
 
     override fun onUpWithDeletePointerActive() {
+        wordSwipeAccumulatedSteps = 0
         if (!connection.hasSelection()) return
         inputLogic.finishInput()
         onCodeInput(KeyCode.DELETE, Constants.NOT_A_COORDINATE, Constants.NOT_A_COORDINATE, false)

@@ -103,6 +103,7 @@ object Defaults {
     val PREF_SPACE_VERTICAL_SWIPE = KeyboardActionListener.SwipeAction.NONE.name
     const val PREF_DELETE_SWIPE = true
     const val PREF_SWIPE_DELETE_BY_WORD = false
+    const val PREF_SWIPE_DELETE_WORD_SENSITIVITY = 3
     const val PREF_AUTOSPACE_AFTER_PUNCTUATION = false
     const val PREF_AUTOSPACE_AFTER_SUGGESTION = true
     const val PREF_AUTOSPACE_AFTER_GESTURE_TYPING = true
