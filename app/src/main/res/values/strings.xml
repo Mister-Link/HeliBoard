@@ -216,6 +216,11 @@
     <string name="swipe_delete_by_word_summary">When swiping from the backspace key, select and delete whole words instead of individual characters</string>
     <!-- Preferences item for word deletion swipe sensitivity (1 = most sensitive, 5 = least sensitive). -->
     <string name="swipe_delete_word_sensitivity">Word delete sensitivity</string>
+    <string name="swipe_sensitivity_most">Most sensitive</string>
+    <string name="swipe_sensitivity_more">More sensitive</string>
+    <string name="swipe_sensitivity_normal">Normal</string>
+    <string name="swipe_sensitivity_less">Less sensitive</string>
+    <string name="swipe_sensitivity_least">Least sensitive</string>
     <!-- Preferences item and dialog title for backup and restore -->
     <string name="backup_restore_title">Backup and restore</string>
     <!-- Message for backup and restore dialog -->

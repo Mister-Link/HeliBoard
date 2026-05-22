@@ -179,7 +179,16 @@ fun createAdvancedSettings(context: Context) = listOf(
             key = setting.key,
             default = Defaults.PREF_SWIPE_DELETE_WORD_SENSITIVITY,
             range = 1f..5f,
-            description = { it.toInt().toString() }
+            stepSize = 1,
+            description = { value ->
+                when (value.toInt()) {
+                    1 -> stringResource(R.string.swipe_sensitivity_most)
+                    2 -> stringResource(R.string.swipe_sensitivity_more)
+                    3 -> stringResource(R.string.swipe_sensitivity_normal)
+                    4 -> stringResource(R.string.swipe_sensitivity_less)
+                    else -> stringResource(R.string.swipe_sensitivity_least)
+                }
+            }
         )
     },
     Setting(context, Settings.PREF_SPACE_TO_CHANGE_LANG,
